@@ -1,42 +1,71 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, StatusBar } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, StatusBar, Alert, Platform } from "react-native";
+import axios from "axios";
 
 export default function Login() {
   const [cpf, setCpf] = useState("");
   const [senha, setSenha] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const validarCpf = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `https://api.cpfhub.io/api/cpf/${cpf}`,
+        {
+          headers: {
+            "x-api-key": "8c874a938137015d208565d88e4aea1795be634fa2d1be9131deb432a10797c3"
+          }
+        }
+      );
+      if (response.data.status === "VALID") {
+        Alert.alert("Sucesso", "CPF válido!");
+      } else {
+        Alert.alert("Erro", "CPF inválido!");
+      }
+    } catch (error) {
+      Alert.alert("Erro", "Não foi possível validar o CPF.");
+    }
+    setLoading(false);
+  };
 
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#8A05BE" />
+    <View style={styles.gradientBg}>
+      <StatusBar barStyle="light-content" backgroundColor="#820ad1" />
       <View style={styles.card}>
         <Image
-          source={{ uri: "https://upload.wikimedia.org/wikipedia/commons/6/6b/Nubank_logo.png" }}
+          source={{ uri: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Nubank_logo_2021.svg/2560px-Nubank_logo_2021.svg.png" }}
           style={styles.logo}
           resizeMode="contain"
         />
-        <Text style={styles.title}>Bem-vindo ao Nubank</Text>
-        <Text style={styles.subtitle}>Acesse sua conta</Text>
+        <Image
+          source={{ uri: "https://upload.wikimedia.org/wikipedia/commons/7/7e/Nubank_Symbol_purple.svg" }}
+          style={styles.nuSymbol}
+          resizeMode="contain"
+        />
         <TextInput
           style={styles.input}
           placeholder="CPF"
-          placeholderTextColor="#b39ddb"
+          placeholderTextColor="#7c2ae8"
           keyboardType="numeric"
           value={cpf}
           onChangeText={setCpf}
+          autoCapitalize="none"
         />
         <TextInput
           style={styles.input}
           placeholder="Senha"
-          placeholderTextColor="#b39ddb"
+          placeholderTextColor="#7c2ae8"
           secureTextEntry
           value={senha}
           onChangeText={setSenha}
+          autoCapitalize="none"
         />
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Entrar</Text>
+        <TouchableOpacity style={styles.button} onPress={validarCpf} disabled={loading}>
+          <Text style={styles.buttonText}>{loading ? "VALIDANDO..." : "ENTRAR"}</Text>
         </TouchableOpacity>
         <TouchableOpacity>
-          <Text style={styles.link}>Esqueci minha senha</Text>
+          <Text style={styles.link}>ESQUECI MINHA SENHA</Text>
         </TouchableOpacity>
       </View>
       <Text style={styles.footer}>© 2025 Nubank • Todos os direitos reservados</Text>
@@ -45,89 +74,100 @@ export default function Login() {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  gradientBg: {
     flex: 1,
-    backgroundColor: "#8A05BE",
-    alignItems: "center",
+    backgroundColor: "#820ad1",
     justifyContent: "center",
-    padding: 24,
+    alignItems: "center",
+    padding: 0,
   },
   card: {
-    width: "100%",
-    maxWidth: 350,
+    width: "90%",
+    maxWidth: 370,
     backgroundColor: "#fff",
-    borderRadius: 20,
-    padding: 28,
+    borderRadius: 28,
+    paddingVertical: 36,
+    paddingHorizontal: 28,
     alignItems: "center",
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.18,
-    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.12,
+    shadowRadius: 16,
     elevation: 8,
   },
   logo: {
+    width: 130,
+    height: 130,
+    marginBottom: 0,
+    marginTop: 10,
+    alignSelf: "center",
+  },
+  nuSymbol: {
     width: 80,
-    height: 80,
-    marginBottom: 16,
-    marginTop: -32,
-  },
-  title: {
-    color: "#8A05BE",
-    fontSize: 22,
-    fontWeight: "bold",
-    marginBottom: 4,
-    textAlign: "center",
-  },
-  subtitle: {
-    color: "#4A148C",
-    fontSize: 16,
-    marginBottom: 24,
-    textAlign: "center",
+    height: 54,
+    marginBottom: 28,
+    alignSelf: "center",
   },
   input: {
     width: "100%",
-    height: 48,
-    backgroundColor: "#f3e6fa",
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    fontSize: 16,
-    marginBottom: 14,
-    color: "#4A148C",
-    borderWidth: 1,
-    borderColor: "#e1bee7",
+    height: 60, 
+    backgroundColor: "#f3eafe",
+    borderRadius: 18,
+    paddingHorizontal: 22,
+    fontSize: 22, 
+    marginBottom: 18,
+    color: "#4A148C", 
+    fontWeight: "bold",
+    borderWidth: 1.5,
+    borderColor: "#820ad1", 
+    ...Platform.select({
+      ios: {
+        shadowColor: "#820ad1",
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.08,
+        shadowRadius: 2,
+      },
+      android: {
+        elevation: 2,
+      },
+    }),
   },
   button: {
     width: "100%",
-    height: 48,
-    backgroundColor: "#8A05BE",
-    borderRadius: 8,
+    height: 50,
+    backgroundColor: "#820ad1",
+    borderRadius: 16,
     alignItems: "center",
     justifyContent: "center",
     marginTop: 8,
-    marginBottom: 10,
-    shadowColor: "#8A05BE",
+    marginBottom: 12,
+    shadowColor: "#820ad1",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
+    shadowOpacity: 0.18,
+    shadowRadius: 6,
     elevation: 2,
   },
   buttonText: {
     color: "#fff",
-    fontSize: 18,
+    fontSize: 19,
     fontWeight: "bold",
+    letterSpacing: 1.2,
   },
   link: {
-    color: "#8A05BE",
-    fontSize: 15,
+    color: "#820ad1",
+    fontSize: 16,
     textDecorationLine: "underline",
-    marginTop: 4,
-    marginBottom: 4,
+    marginTop: 2,
+    marginBottom: 2,
+    fontWeight: "bold",
+    letterSpacing: 0.5,
   },
   footer: {
     color: "#fff",
     fontSize: 13,
-    marginTop: 32,
+    marginTop: 38,
     opacity: 0.7,
     textAlign: "center",
+    letterSpacing: 0.5,
   },
 });
