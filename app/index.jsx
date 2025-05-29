@@ -1,26 +1,99 @@
-import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, StatusBar, Alert, Platform } from "react-native";
-
-// Importe o hook de navegação
+import React, { useState, useEffect, useRef } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  StatusBar,
+  Alert,
+  Platform,
+  ActivityIndicator,
+  Animated,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 export default function Login() {
   const [cpf, setCpf] = useState("");
   const [senha, setSenha] = useState("");
   const [loading, setLoading] = useState(false);
+  const [appLoading, setAppLoading] = useState(true);
 
-  // Inicialize o hook de navegação
   const navigation = useNavigation();
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    // Inicia a animação de fade-in
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 1000,
+      useNativeDriver: true,
+    }).start(() => {
+      // Após fade-in, espera e faz fade-out
+      setTimeout(() => {
+        Animated.timing(fadeAnim, {
+          toValue: 0,
+          duration: 800,
+          useNativeDriver: true,
+        }).start(() => {
+          setAppLoading(false); // Remove splash após animação
+        });
+      }, 1500);
+    });
+  }, []);
 
   const handleLogin = () => {
     if (!cpf || !senha) {
       Alert.alert("Erro", "Preencha CPF e senha.");
       return;
     }
-    // Navega para a tela "Main"
-    navigation.navigate("main");
+
+    setLoading(true);
+
+    setTimeout(() => {
+      setLoading(false);
+      navigation.navigate("main");
+    }, 2000);
   };
 
+  // Splash animada
+  if (appLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <StatusBar barStyle="light-content" backgroundColor="#820ad1" />
+        <Animated.View style={{ opacity: fadeAnim, alignItems: "center" }}>
+          <Image
+            source={{
+              uri: "https://upload.wikimedia.org/wikipedia/commons/7/7e/Nubank_Symbol_purple.svg",
+            }}
+            style={styles.loadingLogo}
+          />
+          <ActivityIndicator size="large" color="#fff" style={{ marginTop: 20 }} />
+          <Text style={styles.loadingText}>Iniciando o app...</Text>
+        </Animated.View>
+      </View>
+    );
+  }
+
+  // Carregamento após clicar em "ENTRAR"
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <StatusBar barStyle="light-content" backgroundColor="#820ad1" />
+        <Image
+          source={{
+            uri: "https://upload.wikimedia.org/wikipedia/commons/7/7e/Nubank_Symbol_purple.svg",
+          }}
+          style={styles.loadingLogo}
+        />
+        <ActivityIndicator size="large" color="#fff" style={{ marginTop: 20 }} />
+        <Text style={styles.loadingText}>Carregando...</Text>
+      </View>
+    );
+  }
+
+  // Tela de Login
   return (
     <View style={styles.gradientBg}>
       <StatusBar barStyle="light-content" backgroundColor="#820ad1" />
@@ -82,13 +155,29 @@ export default function Login() {
   );
 }
 
+// ESTILOS
 const styles = StyleSheet.create({
   gradientBg: {
     flex: 1,
     backgroundColor: "#820ad1",
     justifyContent: "center",
     alignItems: "center",
-    padding: 0,
+  },
+  loadingContainer: {
+    flex: 1,
+    backgroundColor: "#820ad1",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingLogo: {
+    width: 120,
+    height: 120,
+  },
+  loadingText: {
+    marginTop: 16,
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
   },
   card: {
     width: "90%",
@@ -107,7 +196,6 @@ const styles = StyleSheet.create({
   logo: {
     width: 130,
     height: 130,
-    marginBottom: 0,
     marginTop: 10,
     alignSelf: "center",
   },
