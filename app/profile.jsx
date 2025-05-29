@@ -162,8 +162,8 @@ const styles = StyleSheet.create({
   },
   frequentContacts: {
     flexDirection: "row",
-    gap: 18,
-    marginBottom: 10,
+    gap: 8,
+   
   },
   contactCircle: {
     alignItems: "center",
@@ -235,4 +235,4 @@ const styles = StyleSheet.create({
     color: "#222",
     fontWeight: "500",
   },
-});  
+});
