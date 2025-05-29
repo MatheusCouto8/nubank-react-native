@@ -52,7 +52,7 @@ export default function TransferScreen() {
 
       <View style={styles.content}>
         <Text style={styles.title}>
-          Para quem você quer transferir <Text style={styles.amount}>R$ 50,00</Text>?
+          Para quem você quer transferir?
         </Text>
         <Text style={styles.subtitle}>
           Encontre um contato na sua lista ou inicie uma <Text style={styles.bold}>nova transferência</Text>

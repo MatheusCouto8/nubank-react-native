@@ -1,9 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, StatusBar } from "react-native";
 import { Ionicons, MaterialIcons, Feather } from "@expo/vector-icons";
 import { router } from "expo-router"; // Importando o router
 
 export default function Home() {
+  const [hideBalance, setHideBalance] = useState(false);
+
+  const toggleHideBalance = () => {
+    setHideBalance(!hideBalance);
+  };
+
   return (
     <ScrollView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#820AD1" />
@@ -12,8 +18,13 @@ export default function Home() {
           <Ionicons name="person-circle-outline" size={36} color="#fff" />
         </TouchableOpacity>
         <View style={styles.headerIcons}>
-          <TouchableOpacity>
-            <Feather name="eye-off" size={24} color="#fff" style={styles.icon} />
+          <TouchableOpacity onPress={toggleHideBalance}>
+            <Feather 
+              name={hideBalance ? "eye" : "eye-off"} 
+              size={24} 
+              color="#fff" 
+              style={styles.icon} 
+            />
           </TouchableOpacity>
           <TouchableOpacity>
             <Feather name="help-circle" size={24} color="#fff" style={styles.icon} />
@@ -27,7 +38,9 @@ export default function Home() {
 
       <TouchableOpacity style={styles.card} activeOpacity={0.7}>
         <Text style={styles.sectionTitle}>Conta</Text>
-        <Text style={styles.balance}>R$ 1.234,56</Text>
+        <Text style={styles.balance}>
+          {hideBalance ? "R$ ••••••" : "R$ 2.934,56"}
+        </Text>
       </TouchableOpacity>
 
       <View style={styles.actionsRow}>
@@ -62,9 +75,17 @@ export default function Home() {
           <Feather name="lock" size={16} color="#820AD1" style={{ marginLeft: 4 }} />
         </View>
         <Text style={styles.sectionSubtitle}>Cartão bloqueado</Text>
-        <Text style={styles.sectionText}>Fatura atual: <Text style={{fontWeight: 'bold'}}>R$ 789,00</Text></Text>
+        <Text style={styles.sectionText}>
+          Fatura atual: <Text style={{fontWeight: 'bold'}}>
+            {hideBalance ? "R$ •••,••" : "R$ 789,00"}
+          </Text>
+        </Text>
         <View style={styles.divider} />
-        <Text style={styles.sectionFooter}>Limite disponível de <Text style={{color: '#41C900'}}>R$ 2.500,00</Text></Text>
+        <Text style={styles.sectionFooter}>
+          Limite disponível de <Text style={{color: '#41C900'}}>
+            {hideBalance ? "R$ •.•••,••" : "R$ 2.500,00"}
+          </Text>
+        </Text>
       </TouchableOpacity>
       
       <View style={{height: 30}} />
