@@ -7,6 +7,7 @@ export default function Layout() {
       screenOptions={{
         tabBarActiveTintColor: "blue",
         tabBarInactiveTintColor: "gray",
+        tabBarStyle: { display: "none" }, // Esconde a tab bar
       }}
     >
       <Tabs.Screen
@@ -28,9 +29,9 @@ export default function Layout() {
         }}
       />
       <Tabs.Screen
-        name="news"
+        name="main"
         options={{
-          title: "News",
+          title: "PRIN",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="newspaper" color={color} size={size} />
           ),
