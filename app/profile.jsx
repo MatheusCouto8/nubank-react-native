@@ -1,30 +1,23 @@
-import React, { useState } from "react";
-import { View, Text, TextInput, StyleSheet, FlatList, TouchableOpacity, StatusBar } from "react-native";
+import React, { useState, useEffect } from "react";
+import { 
+  View, 
+  Text, 
+  TextInput, 
+  StyleSheet, 
+  FlatList, 
+  TouchableOpacity, 
+  StatusBar, 
+  Alert 
+} from "react-native";
 import { Ionicons, Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
-
-const frequentContacts = [
-  { id: "1", initials: "LP", name: "Laura", color: "#F3E6FA" },
-  { id: "2", initials: "MF", name: "Marlon", color: "#F6E7F9" },
-  { id: "3", initials: "AP", name: "Alice", color: "#E6F6F3" },
-];
-
-const allContacts = [
-  { id: "4", initials: "CP", name: "Clara" },
-  { id: "5", initials: "JS", name: "João Silva" },
-  { id: "6", initials: "RM", name: "Roberto Martins" },
-  { id: "7", initials: "AM", name: "Ana Maria" },
-  { id: "8", initials: "FG", name: "Fernanda Gomes" },
-  { id: "9", initials: "LC", name: "Lucas Costa" },
-  { id: "10", initials: "PR", name: "Paula Rocha" },
-  { id: "11", initials: "TG", name: "Tiago Gomes" },
-  { id: "12", initials: "RS", name: "Rafael Souza" },
-  { id: "13", initials: "MC", name: "Mariana Cruz" },
-];
+import axios from "axios";
 
 export default function TransferScreen() {
+  const [contacts, setContacts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  
+
+  // Navegar para a tela de transferência
   const navegarParaTransferencia = (nome) => {
     router.push({
       pathname: "/transferir",
@@ -32,8 +25,37 @@ export default function TransferScreen() {
     });
   };
 
-  // Filtrar contatos com base no termo de pesquisa
-  const filteredContacts = allContacts.filter(contact => 
+  // Buscar contatos da API
+  useEffect(() => {
+    const fetchContacts = async () => {
+      try {
+        const response = await axios.get("http://192.168.56.1:4000/contacts");
+        const contatosFormatados = response.data.map((item) => ({
+          id: String(item.id),
+          initials: gerarIniciais(item.nome),
+          name: item.nome,
+        }));
+        setContacts(contatosFormatados);
+      } catch (error) {
+        console.error("Erro ao buscar contatos:", error);
+        Alert.alert("Erro", "Não foi possível carregar os contatos.");
+      }
+    };
+
+    fetchContacts();
+  }, []);
+
+  // Gerar iniciais do nome
+  const gerarIniciais = (nome) => {
+    const partes = nome.trim().split(" ");
+    if (partes.length === 1) {
+      return partes[0].substring(0, 2).toUpperCase();
+    }
+    return (partes[0][0] + partes[1][0]).toUpperCase();
+  };
+
+  // Filtro de busca
+  const filteredContacts = contacts.filter(contact => 
     contact.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -74,26 +96,6 @@ export default function TransferScreen() {
           )}
         </View>
 
-        {!searchTerm && (
-          <>
-            <Text style={styles.sectionTitle}>Contatos frequentes</Text>
-            <View style={styles.frequentContacts}>
-              {frequentContacts.map((item) => (
-                <TouchableOpacity 
-                  key={item.id} 
-                  style={styles.contactCircle}
-                  onPress={() => navegarParaTransferencia(item.name)}
-                >
-                  <View style={[styles.contactInitialsContainer, { backgroundColor: item.color }]}>
-                    <Text style={styles.contactInitials}>{item.initials}</Text>
-                  </View>
-                  <Text style={styles.contactName}>{item.name}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </>
-        )}
-
         <Text style={styles.sectionTitle}>
           {searchTerm ? "Resultados" : "Todos os contatos"}
         </Text>
@@ -104,7 +106,7 @@ export default function TransferScreen() {
           </View>
         ) : (
           <FlatList
-            data={searchTerm ? filteredContacts : allContacts}
+            data={searchTerm ? filteredContacts : contacts}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
               <TouchableOpacity 
@@ -169,10 +171,6 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     marginTop: 4,
   },
-  amount: {
-    color: "#820AD1",
-    fontWeight: "bold",
-  },
   subtitle: {
     color: "#666",
     marginBottom: 18,
@@ -212,47 +210,6 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     fontSize: 15,
     letterSpacing: 0.2,
-  },
-  frequentContacts: {
-    flexDirection: "row",
-    gap: 8,
-  },
-  contactCircle: {
-    alignItems: "center",
-    marginRight: 16,
-    width: 64,
-  },
-  contactInitialsContainer: {
-    borderRadius: 32,
-    width: 48,
-    height: 48,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 4,
-  },
-  contactInitials: {
-    fontWeight: "bold",
-    fontSize: 18,
-    color: "#820AD1",
-    backgroundColor: "#FFF",
-    borderRadius: 32,
-    width: 48,
-    height: 48,
-    textAlign: "center",
-    textAlignVertical: "center",
-    borderWidth: 1,
-    borderColor: "#E0E0E0",
-    lineHeight: 48,
-    shadowColor: "#820AD1",
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  contactName: {
-    fontSize: 12,
-    color: "#444",
-    textAlign: "center",
-    fontWeight: "500",
   },
   contactRow: {
     flexDirection: "row",
