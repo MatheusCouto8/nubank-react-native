@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, StatusBar } from "react-native";
 import { Ionicons, MaterialIcons, Feather } from "@expo/vector-icons";
+import { router } from "expo-router"; // Importando o router
 
 export default function Home() {
   return (
@@ -35,7 +36,11 @@ export default function Home() {
           <Text style={styles.actionText}>Receber</Text>
         </TouchableOpacity>
         
-        <TouchableOpacity style={styles.actionButton} activeOpacity={0.7}>
+        <TouchableOpacity 
+          style={styles.actionButton} 
+          activeOpacity={0.7}
+          onPress={() => router.push("/profile")}
+        >
           <Feather name="arrow-up" size={22} color="#000" />
           <Text style={styles.actionText}>Transferir</Text>
         </TouchableOpacity>
