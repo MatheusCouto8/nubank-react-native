@@ -1,19 +1,48 @@
-import { View, Text, Image } from "react-native";
+import React from "react";
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
+import { Ionicons, MaterialIcons, Feather } from "@expo/vector-icons";
 
-export default function Profile() {
+export default function Home() {
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text>Notícias</Text>
-        <Text> GTA 5 Enhanced está sendo bastante criticado no Steam</Text>
-       <Image
-        source={{ uri: 'https://p2.trrsf.com/image/fget/cf/774/0/images.terra.com/2025/03/12/ss_f2e70b5823510daa062293ff0b03821e1dee2d37-1920x1080-sl3fy149rjoi.jpg' }}
-        style={{ width: 500, height: 300  , borderRadius: 0 }}
-      />
-      <Text>Lançado no início de março com novos recursos e melhorias gráficas, GTA 5 Enhanced não está agradando uma parcela significativa dos jogadores no Steam. <br></br>Atualmente o jogo tem apenas 54% de avaliações positivas, levando em conta 19.980 análises feitas pelos usuários.<br></br>
+    <ScrollView style={styles.container}>
+      <View style={styles.header}>
+        <Ionicons name="person-circle-outline" size={32} color="#fff" />
+        <View style={styles.headerIcons}>
+          <Feather name="eye-off" size={22} color="#fff" style={styles.icon} />
+          <Feather name="help-circle" size={22} color="#fff" style={styles.icon} />
+          <MaterialIcons name="mail-outline" size={22} color="#fff" />
+        </View>
+        <Text style={styles.greeting}>Olá, Nome</Text>
+      </View>
 
-A situação fez com que o game se tornasse o pior GTA na opinião dos usuários no Steam, sendo mais criticado do que GTA 3 - The Definitive Edition, que tem 66% de avaliações positivas.<br></br>
-
-</Text>
-    </View>
+     
+      
+    </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: "#fff" },
+  header: {
+    backgroundColor: "#820AD1",
+    paddingTop: 60,
+    paddingHorizontal: 20,
+    paddingBottom: 30,
+  },
+  headerIcons: {
+    flexDirection: "row",
+    position: "absolute",
+    right: 20,
+    top: 60,
+    gap: 15,
+  },
+  icon: { marginRight: 10 },
+  greeting: {
+    color: "#fff",
+    fontSize: 20,
+    marginTop: 20,
+    fontWeight: "bold",
+  },
+
+ 
+});
