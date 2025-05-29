@@ -1,48 +1,61 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, StatusBar, Alert, Platform } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, StatusBar, Alert, Platform, } from "react-native";
 import axios from "axios";
 
 export default function Login() {
   const [cpf, setCpf] = useState("");
   const [senha, setSenha] = useState("");
+  const [dataNascimento, setDataNascimento] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const validarCpf = async () => {
-    setLoading(true);
-    try {
-      const response = await axios.get(
-        `https://api.cpfhub.io/api/cpf/${cpf}`,
-        {
-          headers: {
-            "x-api-key": "8c874a938137015d208565d88e4aea1795be634fa2d1be9131deb432a10797c3"
-          }
+ const validarCpf = async () => {
+  setLoading(true);
+  const cpfLimpo = cpf.replace(/[^\d]/g, "");
+
+  try {
+    const response = await axios.get(
+      `https://api.cpfhub.io/v1/validate/${cpfLimpo}`,
+      {
+        headers: {
+          "x-api-key": "cc6ee1d1e6c5fbf26eeeec1ba724ef9697c6c9231fad334812c3f16e89be4dd7"
         }
-      );
-      if (response.data.status === "VALID") {
-        Alert.alert("Sucesso", "CPF válido!");
-      } else {
-        Alert.alert("Erro", "CPF inválido!");
       }
-    } catch (error) {
-      Alert.alert("Erro", "Não foi possível validar o CPF.");
+    );
+
+    const { name } = response.data.data;
+
+    if (name) {
+      Alert.alert("CPF válido", `Nome: ${name}`);
+    } else {
+      Alert.alert("Erro", "CPF não encontrado ou dados incorretos.");
     }
-    setLoading(false);
-  };
+  } catch (error) {
+    console.error("Erro na requisição:", error);
+    Alert.alert("Erro", "Não foi possível validar o CPF.");
+  }
+
+  setLoading(false);
+};
 
   return (
     <View style={styles.gradientBg}>
       <StatusBar barStyle="light-content" backgroundColor="#820ad1" />
       <View style={styles.card}>
         <Image
-          source={{ uri: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Nubank_logo_2021.svg/2560px-Nubank_logo_2021.svg.png" }}
+          source={{
+            uri: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Nubank_logo_2021.svg/2560px-Nubank_logo_2021.svg.png",
+          }}
           style={styles.logo}
           resizeMode="contain"
         />
         <Image
-          source={{ uri: "https://upload.wikimedia.org/wikipedia/commons/7/7e/Nubank_Symbol_purple.svg" }}
+          source={{
+            uri: "https://upload.wikimedia.org/wikipedia/commons/7/7e/Nubank_Symbol_purple.svg",
+          }}
           style={styles.nuSymbol}
           resizeMode="contain"
         />
+
         <TextInput
           style={styles.input}
           placeholder="CPF"
@@ -52,6 +65,16 @@ export default function Login() {
           onChangeText={setCpf}
           autoCapitalize="none"
         />
+
+        <TextInput
+          style={styles.input}
+          placeholder="Data de nascimento (DD/MM/AAAA)"
+          placeholderTextColor="#7c2ae8"
+          value={dataNascimento}
+          onChangeText={setDataNascimento}
+          keyboardType="numeric"
+        />
+
         <TextInput
           style={styles.input}
           placeholder="Senha"
@@ -61,14 +84,25 @@ export default function Login() {
           onChangeText={setSenha}
           autoCapitalize="none"
         />
-        <TouchableOpacity style={styles.button} onPress={validarCpf} disabled={loading}>
-          <Text style={styles.buttonText}>{loading ? "VALIDANDO..." : "ENTRAR"}</Text>
+
+        <TouchableOpacity
+          style={styles.button}
+          onPress={validarCpf}
+          disabled={loading}
+        >
+          <Text style={styles.buttonText}>
+            {loading ? "VALIDANDO..." : "ENTRAR"}
+          </Text>
         </TouchableOpacity>
+
         <TouchableOpacity>
           <Text style={styles.link}>ESQUECI MINHA SENHA</Text>
         </TouchableOpacity>
       </View>
-      <Text style={styles.footer}>© 2025 Nubank • Todos os direitos reservados</Text>
+
+      <Text style={styles.footer}>
+        © 2025 Nubank • Todos os direitos reservados
+      </Text>
     </View>
   );
 }
@@ -110,16 +144,16 @@ const styles = StyleSheet.create({
   },
   input: {
     width: "100%",
-    height: 60, 
+    height: 60,
     backgroundColor: "#f3eafe",
     borderRadius: 18,
     paddingHorizontal: 22,
-    fontSize: 22, 
+    fontSize: 22,
     marginBottom: 18,
-    color: "#4A148C", 
+    color: "#4A148C",
     fontWeight: "bold",
     borderWidth: 1.5,
-    borderColor: "#820ad1", 
+    borderColor: "#820ad1",
     ...Platform.select({
       ios: {
         shadowColor: "#820ad1",
