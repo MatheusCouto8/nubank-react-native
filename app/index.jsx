@@ -1,41 +1,19 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, StatusBar, Alert, Platform, } from "react-native";
-import axios from "axios";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, StatusBar, Alert, Platform } from "react-native";
 
 export default function Login() {
   const [cpf, setCpf] = useState("");
   const [senha, setSenha] = useState("");
-  const [dataNascimento, setDataNascimento] = useState("");
   const [loading, setLoading] = useState(false);
 
- const validarCpf = async () => {
-  setLoading(true);
-  const cpfLimpo = cpf.replace(/[^\d]/g, "");
-
-  try {
-    const response = await axios.get(
-      `https://api.cpfhub.io/v1/validate/${cpfLimpo}`,
-      {
-        headers: {
-          "x-api-key": "cc6ee1d1e6c5fbf26eeeec1ba724ef9697c6c9231fad334812c3f16e89be4dd7"
-        }
-      }
-    );
-
-    const { name } = response.data.data;
-
-    if (name) {
-      Alert.alert("CPF válido", `Nome: ${name}`);
-    } else {
-      Alert.alert("Erro", "CPF não encontrado ou dados incorretos.");
+  const handleLogin = () => {
+    if (!cpf || !senha) {
+      Alert.alert("Erro", "Preencha CPF e senha.");
+      return;
     }
-  } catch (error) {
-    console.error("Erro na requisição:", error);
-    Alert.alert("Erro", "Não foi possível validar o CPF.");
-  }
-
-  setLoading(false);
-};
+    // Aqui você pode colocar a lógica de autenticação local ou navegação
+    Alert.alert("Login", "Login realizado com sucesso!");
+  };
 
   return (
     <View style={styles.gradientBg}>
@@ -68,15 +46,6 @@ export default function Login() {
 
         <TextInput
           style={styles.input}
-          placeholder="Data de nascimento (DD/MM/AAAA)"
-          placeholderTextColor="#7c2ae8"
-          value={dataNascimento}
-          onChangeText={setDataNascimento}
-          keyboardType="numeric"
-        />
-
-        <TextInput
-          style={styles.input}
           placeholder="Senha"
           placeholderTextColor="#7c2ae8"
           secureTextEntry
@@ -87,7 +56,7 @@ export default function Login() {
 
         <TouchableOpacity
           style={styles.button}
-          onPress={validarCpf}
+          onPress={handleLogin}
           disabled={loading}
         >
           <Text style={styles.buttonText}>
