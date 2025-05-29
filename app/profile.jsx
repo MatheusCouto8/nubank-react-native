@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, TextInput, StyleSheet, FlatList, TouchableOpacity, Image, StatusBar } from "react-native";
+import { View, Text, TextInput, StyleSheet, FlatList, TouchableOpacity, StatusBar } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 const frequentContacts = [
@@ -10,67 +10,76 @@ const frequentContacts = [
 
 const allContacts = [
   { id: "4", initials: "CP", name: "Clara" },
- 
+  { id: "5", initials: "JS", name: "João Silva" },
+  { id: "6", initials: "RM", name: "Roberto Martins" },
+  { id: "7", initials: "AM", name: "Ana Maria" },
+  { id: "8", initials: "FG", name: "Fernanda Gomes" },
+  { id: "9", initials: "LC", name: "Lucas Costa" },
+  { id: "10", initials: "PR", name: "Paula Rocha" },
+  { id: "11", initials: "TG", name: "Tiago Gomes" },
+  { id: "12", initials: "RS", name: "Rafael Souza" },
+  { id: "13", initials: "MC", name: "Mariana Cruz" },
 ];
 
 export default function TransferScreen() {
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor="#820AD1" barStyle="light-content" />
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity>
-          <Ionicons name="arrow-back" size={26} color="#820AD1" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Transferir</Text>
-        <View style={{ width: 26 }} />
+      {/* Header Roxo */}
+      <View style={styles.headerBg}>
+        <View style={styles.header}>
+          <TouchableOpacity>
+            <Ionicons name="arrow-back" size={26} color="#fff" />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Transferir</Text>
+          <View style={{ width: 26 }} />
+        </View>
       </View>
 
-      {/* Title */}
-      <Text style={styles.title}>
-        Para quem você quer transferir <Text style={styles.amount}>R$ 50,00</Text>?
-      </Text>
-      <Text style={styles.subtitle}>
-        Encontre um contato na sua lista ou inicie uma <Text style={styles.bold}>nova transferência</Text>
-      </Text>
+      {/* Conteúdo */}
+      <View style={styles.content}>
+        <Text style={styles.title}>
+          Para quem você quer transferir <Text style={styles.amount}>R$ 50,00</Text>?
+        </Text>
+        <Text style={styles.subtitle}>
+          Encontre um contato na sua lista ou inicie uma <Text style={styles.bold}>nova transferência</Text>
+        </Text>
 
-      {/* Search Input */}
-      <TextInput
-        style={styles.input}
-        placeholder="Nome, CPF/CNPJ ou chave Pix"
-        placeholderTextColor="#B0B0B0"
-      />
+        {/* Search Input */}
+        <TextInput
+          style={styles.input}
+          placeholder="Nome, CPF/CNPJ ou chave Pix"
+          placeholderTextColor="#B0B0B0"
+        />
 
-      {/* Frequent Contacts */}
-      <Text style={styles.sectionTitle}>Contatos frequentes</Text>
-      <View style={styles.frequentContacts}>
-        {frequentContacts.map((item) => (
-          <View key={item.id} style={[styles.contactCircle, { backgroundColor: item.color }]}>
-            <Text style={styles.contactInitials}>{item.initials}</Text>
-            <Text style={styles.contactName}>{item.name}</Text>
-          </View>
-        ))}
-      </View>
+        {/* Frequent Contacts */}
+        <Text style={styles.sectionTitle}>Contatos frequentes</Text>
+        <View style={styles.frequentContacts}>
+          {frequentContacts.map((item) => (
+            <View key={item.id} style={[styles.contactCircle, { backgroundColor: item.color }]}>
+              <Text style={styles.contactInitials}>{item.initials}</Text>
+              <Text style={styles.contactName}>{item.name}</Text>
+            </View>
+          ))}
+        </View>
 
-      {/* All Contacts */}
-      <Text style={styles.sectionTitle}>Todos os contatos</Text>
-      <FlatList
-        data={allContacts}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <TouchableOpacity style={styles.contactRow}>
-            {item.icon ? (
-              <Image source={item.icon} style={styles.contactIcon} />
-            ) : (
+        {/* All Contacts */}
+        <Text style={styles.sectionTitle}>Todos os contatos</Text>
+        <FlatList
+          data={allContacts}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <TouchableOpacity style={styles.contactRow} activeOpacity={0.7}>
               <View style={styles.contactCircleSmall}>
                 <Text style={styles.contactInitialsSmall}>{item.initials}</Text>
               </View>
-            )}
-            <Text style={styles.contactRowName}>{item.name}</Text>
-          </TouchableOpacity>
-        )}
-        style={{ marginTop: 8 }}
-      />
+              <Text style={styles.contactRowName}>{item.name}</Text>
+            </TouchableOpacity>
+          )}
+          style={{ marginTop: 8 }}
+          showsVerticalScrollIndicator={false}
+        />
+      </View>
     </View>
   );
 }
@@ -78,22 +87,37 @@ export default function TransferScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F6F7FB", // fundo Nubank
-    paddingHorizontal: 20,
-    paddingTop: 48,
+    backgroundColor: "#F6F7FB",
+  },
+  headerBg: {
+    backgroundColor: "#820AD1",
+    paddingTop: 38,
+    paddingBottom: 18,
+    paddingHorizontal: 0,
+    borderBottomLeftRadius: 22,
+    borderBottomRightRadius: 22,
+    elevation: 6,
+    shadowColor: "#820AD1",
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 18,
+    paddingHorizontal: 20,
   },
   headerTitle: {
     flex: 1,
     textAlign: "center",
     fontSize: 20,
     fontWeight: "bold",
-    color: "#820AD1",
+    color: "#fff",
     letterSpacing: 0.5,
+  },
+  content: {
+    flex: 1,
+    paddingHorizontal: 20,
+    marginTop: 12,
   },
   title: {
     fontSize: 19,
@@ -123,10 +147,10 @@ const styles = StyleSheet.create({
     marginBottom: 22,
     borderWidth: 1,
     borderColor: "#E0E0E0",
-    shadowColor: "#000",
-    shadowOpacity: 0.03,
+    shadowColor: "#820AD1",
+    shadowOpacity: 0.04,
     shadowRadius: 2,
-    elevation: 1,
+    elevation: 2,
   },
   sectionTitle: {
     fontWeight: "bold",
@@ -160,10 +184,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#E0E0E0",
     lineHeight: 48,
-    shadowColor: "#000",
-    shadowOpacity: 0.04,
-    shadowRadius: 2,
-    elevation: 1,
+    shadowColor: "#820AD1",
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
   },
   contactName: {
     fontSize: 12,
@@ -182,8 +206,8 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     paddingHorizontal: 8,
     elevation: 1,
-    shadowColor: "#000",
-    shadowOpacity: 0.02,
+    shadowColor: "#820AD1",
+    shadowOpacity: 0.03,
     shadowRadius: 1,
   },
   contactCircleSmall: {
@@ -194,21 +218,21 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginRight: 12,
+    borderWidth: 1,
+    borderColor: "#E0E0E0",
+    shadowColor: "#820AD1",
+    shadowOpacity: 0.06,
+    shadowRadius: 2,
+    elevation: 1,
   },
   contactInitialsSmall: {
     fontWeight: "bold",
     color: "#820AD1",
     fontSize: 16,
   },
-  contactIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 8,
-    marginRight: 12,
-  },
   contactRowName: {
     fontSize: 16,
     color: "#222",
     fontWeight: "500",
   },
-});
+});  
