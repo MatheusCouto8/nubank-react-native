@@ -1,18 +1,24 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, StatusBar, Alert, Platform } from "react-native";
 
+// Importe o hook de navegação
+import { useNavigation } from "@react-navigation/native";
+
 export default function Login() {
   const [cpf, setCpf] = useState("");
   const [senha, setSenha] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // Inicialize o hook de navegação
+  const navigation = useNavigation();
 
   const handleLogin = () => {
     if (!cpf || !senha) {
       Alert.alert("Erro", "Preencha CPF e senha.");
       return;
     }
-    // Aqui você pode colocar a lógica de autenticação local ou navegação
-    Alert.alert("Login", "Login realizado com sucesso!");
+    // Navega para a tela "Main"
+    navigation.navigate("main");
   };
 
   return (
