@@ -29,7 +29,7 @@ export default function TransferScreen() {
   useEffect(() => {
     const fetchContacts = async () => {
       try {
-        const response = await axios.get("http://192.168.56.1:4000/contacts");
+        const response = await axios.get("http://localhost:3000/contacts");
         const contatosFormatados = response.data.map((item) => ({
           id: String(item.id),
           initials: gerarIniciais(item.nome),
