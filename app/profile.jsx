@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, TextInput, StyleSheet, FlatList, TouchableOpacity, StatusBar } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, Feather } from "@expo/vector-icons";
+import { router } from "expo-router";
 
 const frequentContacts = [
   { id: "1", initials: "LP", name: "Laura", color: "#F3E6FA" },
   { id: "2", initials: "MF", name: "Marlon", color: "#F6E7F9" },
-  { id: "3", initials: "AP", name: "ALICE", color: "#E6F6F3" },
+  { id: "3", initials: "AP", name: "Alice", color: "#E6F6F3" },
 ];
 
 const allContacts = [
@@ -22,13 +23,26 @@ const allContacts = [
 ];
 
 export default function TransferScreen() {
+  const [searchTerm, setSearchTerm] = useState("");
+  
+  const navegarParaTransferencia = (nome) => {
+    router.push({
+      pathname: "/transferir",
+      params: { destinatario: nome }
+    });
+  };
+
+  // Filtrar contatos com base no termo de pesquisa
+  const filteredContacts = allContacts.filter(contact => 
+    contact.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor="#820AD1" barStyle="light-content" />
-      {/* Header Roxo */}
       <View style={styles.headerBg}>
         <View style={styles.header}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push("/main")}>
             <Ionicons name="arrow-back" size={26} color="#fff" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Transferir</Text>
@@ -36,7 +50,6 @@ export default function TransferScreen() {
         </View>
       </View>
 
-      {/* Conteúdo */}
       <View style={styles.content}>
         <Text style={styles.title}>
           Para quem você quer transferir <Text style={styles.amount}>R$ 50,00</Text>?
@@ -45,40 +58,70 @@ export default function TransferScreen() {
           Encontre um contato na sua lista ou inicie uma <Text style={styles.bold}>nova transferência</Text>
         </Text>
 
-        {/* Search Input */}
-        <TextInput
-          style={styles.input}
-          placeholder="Nome, CPF/CNPJ ou chave Pix"
-          placeholderTextColor="#B0B0B0"
-        />
-
-        {/* Frequent Contacts */}
-        <Text style={styles.sectionTitle}>Contatos frequentes</Text>
-        <View style={styles.frequentContacts}>
-          {frequentContacts.map((item) => (
-            <View key={item.id} style={[styles.contactCircle, { backgroundColor: item.color }]}>
-              <Text style={styles.contactInitials}>{item.initials}</Text>
-              <Text style={styles.contactName}>{item.name}</Text>
-            </View>
-          ))}
-        </View>
-
-        {/* All Contacts */}
-        <Text style={styles.sectionTitle}>Todos os contatos</Text>
-        <FlatList
-          data={allContacts}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <TouchableOpacity style={styles.contactRow} activeOpacity={0.7}>
-              <View style={styles.contactCircleSmall}>
-                <Text style={styles.contactInitialsSmall}>{item.initials}</Text>
-              </View>
-              <Text style={styles.contactRowName}>{item.name}</Text>
+        <View style={styles.searchContainer}>
+          <Feather name="search" size={18} color="#999" style={styles.searchIcon} />
+          <TextInput
+            style={styles.input}
+            placeholder="Nome, CPF/CNPJ ou chave Pix"
+            placeholderTextColor="#B0B0B0"
+            value={searchTerm}
+            onChangeText={setSearchTerm}
+          />
+          {searchTerm !== "" && (
+            <TouchableOpacity onPress={() => setSearchTerm("")}>
+              <Feather name="x-circle" size={18} color="#999" />
             </TouchableOpacity>
           )}
-          style={{ marginTop: 8 }}
-          showsVerticalScrollIndicator={false}
-        />
+        </View>
+
+        {!searchTerm && (
+          <>
+            <Text style={styles.sectionTitle}>Contatos frequentes</Text>
+            <View style={styles.frequentContacts}>
+              {frequentContacts.map((item) => (
+                <TouchableOpacity 
+                  key={item.id} 
+                  style={styles.contactCircle}
+                  onPress={() => navegarParaTransferencia(item.name)}
+                >
+                  <View style={[styles.contactInitialsContainer, { backgroundColor: item.color }]}>
+                    <Text style={styles.contactInitials}>{item.initials}</Text>
+                  </View>
+                  <Text style={styles.contactName}>{item.name}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </>
+        )}
+
+        <Text style={styles.sectionTitle}>
+          {searchTerm ? "Resultados" : "Todos os contatos"}
+        </Text>
+        
+        {filteredContacts.length === 0 && searchTerm ? (
+          <View style={styles.noResults}>
+            <Text style={styles.noResultsText}>Nenhum contato encontrado</Text>
+          </View>
+        ) : (
+          <FlatList
+            data={searchTerm ? filteredContacts : allContacts}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <TouchableOpacity 
+                style={styles.contactRow} 
+                activeOpacity={0.7}
+                onPress={() => navegarParaTransferencia(item.name)}
+              >
+                <View style={styles.contactCircleSmall}>
+                  <Text style={styles.contactInitialsSmall}>{item.initials}</Text>
+                </View>
+                <Text style={styles.contactRowName}>{item.name}</Text>
+              </TouchableOpacity>
+            )}
+            style={{ marginTop: 8 }}
+            showsVerticalScrollIndicator={false}
+          />
+        )}
       </View>
     </View>
   );
@@ -139,18 +182,28 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#222",
   },
-  input: {
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: "#FFF",
     borderRadius: 12,
-    padding: 16,
-    fontSize: 16,
-    marginBottom: 22,
+    paddingHorizontal: 16,
     borderWidth: 1,
     borderColor: "#E0E0E0",
     shadowColor: "#820AD1",
     shadowOpacity: 0.04,
     shadowRadius: 2,
     elevation: 2,
+    marginBottom: 22,
+  },
+  searchIcon: {
+    marginRight: 10,
+  },
+  input: {
+    flex: 1,
+    padding: 16,
+    fontSize: 16,
+    color: "#333",
   },
   sectionTitle: {
     fontWeight: "bold",
@@ -163,24 +216,30 @@ const styles = StyleSheet.create({
   frequentContacts: {
     flexDirection: "row",
     gap: 8,
-   
   },
   contactCircle: {
     alignItems: "center",
     marginRight: 16,
     width: 64,
   },
+  contactInitialsContainer: {
+    borderRadius: 32,
+    width: 48,
+    height: 48,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 4,
+  },
   contactInitials: {
+    fontWeight: "bold",
+    fontSize: 18,
+    color: "#820AD1",
     backgroundColor: "#FFF",
     borderRadius: 32,
     width: 48,
     height: 48,
     textAlign: "center",
     textAlignVertical: "center",
-    fontWeight: "bold",
-    fontSize: 18,
-    color: "#820AD1",
-    marginBottom: 4,
     borderWidth: 1,
     borderColor: "#E0E0E0",
     lineHeight: 48,
@@ -235,4 +294,14 @@ const styles = StyleSheet.create({
     color: "#222",
     fontWeight: "500",
   },
+  noResults: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 40,
+  },
+  noResultsText: {
+    color: "#999",
+    fontSize: 16,
+  }
 });

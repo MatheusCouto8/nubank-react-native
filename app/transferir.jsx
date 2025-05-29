@@ -1,9 +1,12 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, StatusBar, Modal, KeyboardAvoidingView, Platform } from "react-native";
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, StatusBar, Modal, KeyboardAvoidingView, Platform, Alert } from "react-native";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 
 export default function ConfirmacaoTransferencia() {
+  const params = useLocalSearchParams();
+  const destinatario = params.destinatario || "Destinatário";
+
   const [valor, setValor] = useState("50,00");
   const [modalVisible, setModalVisible] = useState(false);
   const [novoValor, setNovoValor] = useState("");
@@ -30,18 +33,30 @@ export default function ConfirmacaoTransferencia() {
     setMsgModalVisible(false);
   };
 
+  const handleConfirmarTransferencia = () => {
+    // Mostrar um alert para simular o processamento da transferência
+    Alert.alert(
+      "Transferência Concluída",
+      `Você transferiu R$ ${valor} para ${destinatario}`,
+      [
+        {
+          text: "OK",
+          onPress: () => router.replace("/main") // Volta para a tela principal após a confirmação
+        }
+      ]
+    );
+  };
+
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor="#820AD1" barStyle="light-content" />
 
-      {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
+        <TouchableOpacity onPress={() => router.push("/profile")}>
           <Ionicons name="arrow-back" size={26} color="#222" />
         </TouchableOpacity>
       </View>
 
-      {/* Conteúdo */}
       <Text style={styles.title}>Transferindo</Text>
       <View style={styles.amountRow}>
         <Text style={styles.amount}>R$ {valor}</Text>
@@ -49,9 +64,8 @@ export default function ConfirmacaoTransferencia() {
           <MaterialCommunityIcons name="pencil-outline" size={20} color="#820AD1" style={{ marginLeft: 6 }} />
         </TouchableOpacity>
       </View>
-      <Text style={styles.destinatario}>para <Text style={styles.destinatarioNome}>Laura</Text></Text>
+      <Text style={styles.destinatario}>para <Text style={styles.destinatarioNome}>{destinatario}</Text></Text>
 
-      {/* Mensagem */}
       <TouchableOpacity style={styles.msgBox} onPress={abrirEscreverMensagem}>
         {mensagem ? (
           <Text style={styles.msgTextFilled}>{mensagem}</Text>
@@ -63,7 +77,6 @@ export default function ConfirmacaoTransferencia() {
         )}
       </TouchableOpacity>
 
-      {/* Dados */}
       <View style={styles.infoRow}>
         <Text style={styles.infoLabel}>CPF</Text>
         <Text style={styles.infoValue}>***.***.207-83</Text>
@@ -73,8 +86,10 @@ export default function ConfirmacaoTransferencia() {
         <Text style={styles.infoValue}>NU PAGAMENTOS - IP</Text>
       </View>
 
-      {/* Botão de confirmar */}
-      <TouchableOpacity style={styles.btnConfirmar}>
+      <TouchableOpacity 
+        style={styles.btnConfirmar}
+        onPress={handleConfirmarTransferencia}
+      >
         <Text style={styles.btnConfirmarText}>Confirmar</Text>
       </TouchableOpacity>
 
@@ -268,7 +283,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
-  // Estilos para o modal
   centeredView: {
     flex: 1,
     justifyContent: "flex-end",
